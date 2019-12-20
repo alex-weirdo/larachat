@@ -80,8 +80,16 @@
             @endif
 
             <div class="content">
+                <?php
+                echo $environment = App::environment();
+                config(['app.timezone' => 'Russia/Saint-P.burg']);
+                $value = config('app.timezone');
+                echo "<pre>";
+                var_dump($value);
+                echo "</pre>";
+                ?>
                 <div class="title m-b-md">
-                    Laravel
+                    {{--Laravel--}}
                 </div>
 
                 <div class="links">

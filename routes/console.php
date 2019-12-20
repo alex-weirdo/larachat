@@ -16,3 +16,7 @@ use Illuminate\Foundation\Inspiring;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->describe('Display an inspiring quote');
+Artisan::command('time', function () {
+    echo "\n" . 'Hi!' . "\n" . 'Now in ' . ini_get('date.timezone') . ' ';
+    echo (date("H")+3) . date(":i:s") . "\n";   // windows must die
+})->describe('Showing current time and server timezone.');
