@@ -11,6 +11,30 @@
 |
 */
 
+use Illuminate\Support\Facades\DB;
+
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/admin/{id}', 'UserController@show')->middleware('auth');
+
+
+Route::get('/login/', 'UserController@loginForm');
+Route::post('/login/', [ 'as' => 'login', 'uses' => 'Auth\LoginController@do']);
+
+
+Route::get('/test', function() {
+    if (DB::connection()->getDatabaseName()) {
+        dd('Есть контакт!');
+    } else {
+        return 'Соединения нет';
+    }
+});
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
