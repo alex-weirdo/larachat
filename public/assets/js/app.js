@@ -6,7 +6,6 @@ var app = new Vue({
     data: {
         rooms: rooms,
         room: { "data": { "type": "room", "id": "", "name": "" } },
-        // room: this.rooms[this.selected],
         selected: 0,
         selectedRoomIndex: 0,
         selectedRoomId: 0,
@@ -27,8 +26,6 @@ var app = new Vue({
     computed: {
         filteredRooms() {
             return this.rooms.filter(room => {
-                this.selectedRoomIndex = ( this.searchRooms ) ? 0 : this.selectedRoomIndex;
-                this.selected = this.selectedRoomIndex;
                 return room.name.indexOf(this.searchRooms) > -1
             });
         }
