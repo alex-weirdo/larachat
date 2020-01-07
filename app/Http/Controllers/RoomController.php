@@ -15,7 +15,10 @@ class RoomController extends Controller
      */
     public function index()
     {
-        //
+        $rooms = \App\Room::where('id', '>', 0)->orderBy('updated_at', 'desc')->get();
+        return $rooms->reject(function ($room) {
+            $room->isActive = false;
+        });
     }
 
     /**

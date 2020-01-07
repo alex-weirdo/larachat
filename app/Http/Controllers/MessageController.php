@@ -36,6 +36,7 @@ class MessageController extends Controller
     public function store(Request $request)
     {
         //
+        return $request;
     }
 
     /**
@@ -46,7 +47,7 @@ class MessageController extends Controller
      */
     public function show(Message $message)
     {
-        //
+        return new \App\Http\Resources\MessageResource($message);
     }
 
     /**
@@ -81,5 +82,17 @@ class MessageController extends Controller
     public function destroy(Message $message)
     {
         //
+    }
+
+
+    /**
+     * Получает все сообщения в комнате
+     *
+     * @param $room_id
+     * @return mixed
+     */
+    public function getByRoom ($room_id) {
+        $messages = \App\Message::where('room_id', $room_id)->orderBy('updated_at', 'asc')->get();
+        return $messages->reject(function ($message) {});
     }
 }

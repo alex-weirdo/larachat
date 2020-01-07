@@ -23,6 +23,7 @@ Route::get('/admin/{id}', 'UserController@show')->middleware('auth');
 Route::get('/login/', 'UserController@loginForm');
 Route::post('/login/', [ 'as' => 'login', 'uses' => 'Auth\LoginController@do']);
 
+Auth::routes();
 
 Route::get('/test', function() {
     if (DB::connection()->getDatabaseName()) {
@@ -30,8 +31,8 @@ Route::get('/test', function() {
     } else {
         return 'Соединения нет';
     }
-});
-Auth::routes();
+})->middleware('auth');
+
 
 Route::get('/home', 'HomeController@index')->name('home');
 
