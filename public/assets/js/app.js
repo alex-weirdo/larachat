@@ -1,6 +1,7 @@
 const room = (id, name, last_update, last_message, image, isActive) => ({id, name, last_update, last_message, image, isActive});
 const message = (id, author, text, updated_at) => ({id, author, text, updated_at});
 const rooms = ['', '', '', '', '', false];
+const Bus = new Vue();
 var app = new Vue({
     el: '#app',
     data: {
@@ -21,6 +22,52 @@ var app = new Vue({
         room_id: null
     },
     methods: {
+        init : function () {
+            var pusher = new Pusher('ba62cbea57f9bdb16fb4', {
+                cluster: 'eu'
+            });
+
+            var channel = pusher.subscribe('my-channel');
+
+            channel.bind('App\\Events\\MessageSent', function(data) {
+
+                // notify работает всегда
+                // this.notify();
+                // todo: если data.room_id == app.room.data.id вызываем метод gotMail
+                if (data.room_id != app.room.data.id) return false;
+                // else this.gotMail();
+                let today = new Date();
+                let date = today.getFullYear()+'-'+(("0" + (today.getMonth() + 1)).slice(-2))+'-'+today.getDate();
+                let time = ("0" + (today.getHours())).slice(-2) + ":" + ("0" + (today.getMinutes())).slice(-2) + ":" + ("0" + (today.getSeconds())).slice(-2);
+                let dateTime = date+' '+time;
+                app.messages.push({
+                    text: data.message,
+                    user_id: data.user_id,
+                    user: {
+                        id: data.user_id,
+                        name: data.user_name
+                    },
+                    created_at: dateTime
+                });
+
+                setTimeout(function(){
+                    let history = document.getElementById('msg_history');
+                    history.scrollTop = history.scrollHeight+50;
+                }, 500);
+            });
+
+            this.getRooms();
+        },
+        notify : function () {},
+        gotMessage : function () {},
+        getRooms : function () {
+            axios.get('/api/rooms/').then(response => {
+                console.log('here', response.data);
+                this.rooms = response.data;
+                // sleep(500);
+                this.loading = false;
+            });
+        },
         selectRoom : function (index, id) {
             this.message = '';
             this.rooms[this.selected].isActive = false;
@@ -33,7 +80,7 @@ var app = new Vue({
             setTimeout(function(){
                 let history = document.getElementById('msg_history');
                 history.scrollTop = history.scrollHeight+50;
-            }, 1000);
+            }, 500);
         },
         startLoading : function () {
             document.getElementById('loading').classList.add('start');
@@ -57,12 +104,10 @@ var app = new Vue({
         }
     },
     mounted() {
-        axios.get('/api/rooms/').then(response => {
-            console.log('here', response.data);
-            this.rooms = response.data;
-            // sleep(500);
-            this.loading = false;
+        Bus.$on('hovered', (message)=>{
+            document.getElementById('rgbrtb').innerHTML = message;
         });
+        this.init();
     }
 });
 
@@ -76,3 +121,16 @@ function sleep(milliseconds) {
         currentDate = Date.now();
     } while (currentDate - date < milliseconds);
 }
+
+
+/**
+ * я компонент
+ */
+Vue.component('my-custom', {
+    template: '<h1 id="rgbrtb" @mouseover="hover">хуй</h1>',
+    methods: {
+        hover: ()=>{
+            Bus.$emit('hovered', 'йух')
+        }
+    }
+});

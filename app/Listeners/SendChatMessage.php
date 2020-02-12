@@ -4,15 +4,14 @@ namespace App\Listeners;
 
 use App\Events\MessageSent;
 use App\Message;
+use App\Room;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class SendChatMessage
 {
     /**
-     * Create the event listener.
-     *
-     * @return void
+     * SendChatMessage constructor.
      */
     public function __construct()
     {
@@ -34,6 +33,8 @@ class SendChatMessage
         $message->user_id = $event->user_id;
         $message->room_id = $event->room_id;
         $message->save();
-        
+
+        Room::find($event->room_id)->touch();
+
     }
 }

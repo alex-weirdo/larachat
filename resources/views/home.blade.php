@@ -69,7 +69,7 @@
                         <form v-on:submit="chatMessageSend" autocomplete="off">
                             {{ csrf_field() }}
                             <input type="hidden" name="room_id" v-model="room_id">
-                            <input type="text" class="write_msg" id="write_msg" v-model="message" name="message" placeholder="Type a message" />
+                            <input type="text" class="write_msg" id="write_msg" v-model="message" name="message" placeholder="Type a message" autofocus />
                             <button class="msg_send_btn" type="submit"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
                         </form>
                     </div>
@@ -83,32 +83,3 @@
     </div>
     </template></div>
 <script src="https://js.pusher.com/5.1/pusher.min.js"></script>
-<script>
-    var pusher = new Pusher('ba62cbea57f9bdb16fb4', {
-        cluster: 'eu'
-    });
-
-    var channel = pusher.subscribe('my-channel');
-
-    channel.bind('App\\Events\\MessageSent', function(data) {
-        if (data.room_id != app.room.data.id) return false;
-        let today = new Date();
-        let date = today.getFullYear()+'-'+(("0" + (today.getMonth() + 1)).slice(-2))+'-'+today.getDate();
-        let time = ("0" + (today.getHours())).slice(-2) + ":" + ("0" + (today.getMinutes())).slice(-2) + ":" + ("0" + (today.getSeconds())).slice(-2);
-        let dateTime = date+' '+time;
-        app.messages.push({
-            text: data.message,
-            user_id: data.user_id,
-            user: {
-                id: data.user_id,
-                name: data.user_name
-            },
-            created_at: dateTime
-        });
-
-        setTimeout(function(){
-            let history = document.getElementById('msg_history');
-            history.scrollTop = history.scrollHeight+50;
-        }, 1000);
-    });
-</script>

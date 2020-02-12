@@ -28,8 +28,7 @@ class MessageSent implements ShouldBroadcast
         $this->user_name = $user->name;
         $this->room_id = $room;
         $this->message = $message;
-
-        $this->broadcastOn();
+        
     }
 
     /**
