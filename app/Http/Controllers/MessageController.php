@@ -3,7 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Message;
+use App\Events\MessageSent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
+use PHPUnit\Framework\MockObject\Stub\Exception;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class MessageController extends Controller
 {
@@ -92,7 +97,18 @@ class MessageController extends Controller
      * @return mixed
      */
     public function getByRoom ($room_id) {
-        $messages = \App\Message::where('room_id', $room_id)->orderBy('updated_at', 'asc')->get();
+        $messages = \App\Message::with('user')->where('room_id', $room_id)->orderBy('updated_at', 'asc')->get();
         return $messages->reject(function ($message) {});
+    }
+
+
+    public function sendMessage(Request $request)
+    {
+        $user = Auth::user();
+        $message = $request->message;
+        $room = $request->room_id;
+        if (!($user && $message && $room))
+            return 'Ошибка в переданных полях';
+        broadcast(new MessageSent($user, $room, $message))->toOthers();
     }
 }
