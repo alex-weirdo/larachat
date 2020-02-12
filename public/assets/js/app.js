@@ -22,6 +22,7 @@ var app = new Vue({
     },
     methods: {
         selectRoom : function (index, id) {
+            this.message = '';
             this.rooms[this.selected].isActive = false;
             this.selected = index;
             this.rooms[this.selected].isActive = true;
@@ -45,6 +46,7 @@ var app = new Vue({
                 message: this.message,
                 room_id: this.room.data.id
             });
+            this.message = '';
         }
     },
     computed: {

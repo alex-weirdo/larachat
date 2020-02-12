@@ -64,12 +64,12 @@
                             {{--<span class="time_date"> 11:01 AM    |    June 9</span> --}}
                     </div>
                 </div>
-                <div class="type_msg">
+                <div class="type_msg" v-if="room.data.id">
                     <div class="input_msg_write">
-                        <form v-on:submit="chatMessageSend">
+                        <form v-on:submit="chatMessageSend" autocomplete="off">
                             {{ csrf_field() }}
                             <input type="hidden" name="room_id" v-model="room_id">
-                            <input type="text" class="write_msg" v-model="message" name="message" placeholder="Type a message" />
+                            <input type="text" class="write_msg" id="write_msg" v-model="message" name="message" placeholder="Type a message" />
                             <button class="msg_send_btn" type="submit"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
                         </form>
                     </div>

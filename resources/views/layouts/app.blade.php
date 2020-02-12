@@ -19,26 +19,8 @@
     <!-- Styles -->
 {{--    <link href="{{ asset('css/app.css') }}" rel="stylesheet">--}}
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <!--script src="https://js.pusher.com/5.0/pusher.min.js"></script>
-    <script>
-
-        // Enable pusher logging - don't include this in production
-        Pusher.logToConsole = true;
-
-        var pusher = new Pusher('ba62cbea57f9bdb16fb4', {
-            cluster: 'eu',
-            forceTLS: true
-        });
-
-        var channel = pusher.subscribe('my-channel');
-        channel.bind('my-event', function(data) {
-//            document.write('<p>' + JSON.stringify(data) + '</p>');
-            window.location.href = window.location.href;
-        });
-    </script-->
 </head>
-<body>
-
+<body class="<?php echo str_ireplace('/', '', $_SERVER['REQUEST_URI']) ?>">
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
