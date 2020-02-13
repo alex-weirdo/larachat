@@ -36,4 +36,10 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    protected $table = 'users';
+
+    public function dialogs () {
+        return $this->belongsToMany(Dialog::class, 'users_dialogs');
+    }
 }

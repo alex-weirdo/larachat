@@ -28,5 +28,11 @@ Route::resource('/rooms', 'RoomController');
     });
 });*/
 
+Route::resource('/resource/messages', 'MessageController');
+
+// диалоги пользователя
+Route::get('/user/{user_id}/dialogs', 'UserController@dialogs');
+
+
 // сообщения
 Route::get('/messages/{room_id}', 'MessageController@getByRoom');

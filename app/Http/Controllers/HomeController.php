@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Dialog;
+use App\User;
 use Illuminate\Http\Request;
 use App\Events\MessageSent;
 
 class HomeController extends Controller
 {
     /**
-     * Create a new controller instance.
-     *
-     * @return void
+     * HomeController constructor.
      */
     public function __construct()
     {

@@ -42,3 +42,9 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 //
 Route::post('/messages', 'MessageController@sendMessage');
+
+Route::get('/channel/typing', function () {
+    $user = $_GET['user'];
+    $room_id = $_GET['room_id'];
+    broadcast(new App\Events\MessageTyping($user, $room_id))->toOthers();
+});

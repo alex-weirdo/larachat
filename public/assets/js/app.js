@@ -15,11 +15,15 @@ var app = new Vue({
         messages: [],
         loading: true,
 
-        user_id: false,
+        user_id: document.getElementById('userid').value,
+        username: document.getElementById('username').innerHTML,
 
         _token: null,
         message: null,
-        room_id: null
+        room_id: null,
+
+        typingSkip: 1,
+        typeSkipSetting: 5
     },
     methods: {
         init : function () {
@@ -32,7 +36,6 @@ var app = new Vue({
             $root = this;
 
             channel.bind('App\\Events\\MessageSent', function(data) {
-
                 // notify работает всегда
                 $root.notify();
                 // todo: если data.room_id == app.room.data.id вызываем метод gotMail
@@ -53,22 +56,32 @@ var app = new Vue({
                 });
             });
             $root.messagesScroll();
-            $root.getRooms();
+            $root.getChats();
         },
         notify : function () {
             this.messagesScroll();
-            this.getRooms();
+            this.getChats();
         },
         gotMessage : function () {},
         getRooms : function () {
             axios.get('/api/rooms/').then(response => {
-                console.log('here', response.data);
                 this.rooms = response.data;
-                // sleep(500);
-                this.loading = false;
+                // this.loading = false;
             });
         },
-        selectRoom : function (index, id) {
+        getDialogs : function (user_id) {
+            axios.get('/api/user/'+user_id+'/dialogs').then(response => {
+                this.rooms = this.rooms.concat(response.data);
+            });
+        },
+        getChats : function () {
+            this.getRooms();
+            // личные сообщения пока спрячем
+            // this.getDialogs(this.user_id);
+
+            this.loading = false;
+        },
+        selectRoom : function (index, id, scroll=true) {
             this.message = '';
             this.rooms[this.selected].isActive = false;
             this.selected = index;
@@ -77,7 +90,11 @@ var app = new Vue({
             axios.get('/api/messages/' + id).then(response => (this.messages = response.data));
             axios.get('/api/rooms/' + id).then(response => (this.room = response.data));
 
-            this.messagesScroll();
+            if (scroll) this.messagesScroll();
+
+            this.listenTyping(id);
+
+            document.getElementById('write_msg').focus();
         },
         startLoading : function () {
             document.getElementById('loading').classList.add('start');
@@ -91,8 +108,16 @@ var app = new Vue({
                 room_id: this.room.data.id
             });
             this.message = '';
-            this.getRooms();
+            this.getChats();
             this.messagesScroll();
+        },
+        delete_message : function (id) {
+            axios.post('/api/resource/messages/'+id, {
+                _token: this._token,
+                _method: 'delete'
+            }).then(()=>{
+                this.selectRoom(this.selected, this.selectedRoomId, false);
+            });
         },
         messagesScroll : function () {
             let waiting = setInterval(t => {
@@ -103,6 +128,29 @@ var app = new Vue({
                 }
             }, 5);
             setTimeout(t => {clearInterval(waiting)}, 1000);
+        },
+        listenTyping : function (room_id) {
+            let pusher = new Pusher('ba62cbea57f9bdb16fb4', {
+                cluster: 'eu'
+            });
+            let channel = pusher.subscribe('channel_' + room_id);
+            $root = this;
+            channel.bind('App\\Events\\MessageTyping', function(data) {
+                let history = document.getElementById('msg_history');
+                if (room_id == data.room_id && $root.username != data.user_name ) {
+                    history.setAttribute('data-typing', data.user_name + ' печатает сообщение ... ');
+                    history.classList.add('typing');
+                }
+                setTimeout(function(){
+                    history.classList.remove('typing');
+                }, 500);
+            });
+        },
+        typing : function (name) {
+            if (!(--this.typingSkip)) {
+                axios.get('/channel/typing?user=' + name + '&room_id=' + this.room.data.id);
+                this.typingSkip = this.typeSkipSetting;
+            }
         }
     },
     computed: {
@@ -143,3 +191,11 @@ Vue.component('my-custom', {
         }
     }
 });
+
+
+
+
+emojify.setConfig({img_dir : 'https://www.webfx.com/tools/emoji-cheat-sheet/graphics/emojis'});
+setInterval(()=>{emojify.run();for (let i=0; i<document.getElementsByClassName('emoji').length; i++) {
+    document.getElementsByClassName('emoji')[i].parentNode.style.background = 'none';
+}}, 100);
