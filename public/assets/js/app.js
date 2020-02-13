@@ -194,7 +194,6 @@ Vue.component('my-custom', {
 
 
 
-
 emojify.setConfig({img_dir : 'https://www.webfx.com/tools/emoji-cheat-sheet/graphics/emojis'});
 setInterval(()=>{emojify.run();for (let i=0; i<document.getElementsByClassName('emoji').length; i++) {
     document.getElementsByClassName('emoji')[i].parentNode.style.background = 'none';
