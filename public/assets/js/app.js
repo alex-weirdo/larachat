@@ -29,10 +29,12 @@ var app = new Vue({
 
             var channel = pusher.subscribe('my-channel');
 
+            $root = this;
+
             channel.bind('App\\Events\\MessageSent', function(data) {
 
                 // notify работает всегда
-                // this.notify();
+                $root.notify();
                 // todo: если data.room_id == app.room.data.id вызываем метод gotMail
                 if (data.room_id != app.room.data.id) return false;
                 // else this.gotMail();
@@ -49,16 +51,14 @@ var app = new Vue({
                     },
                     created_at: dateTime
                 });
-
-                setTimeout(function(){
-                    let history = document.getElementById('msg_history');
-                    history.scrollTop = history.scrollHeight+50;
-                }, 500);
             });
-
+            $root.messagesScroll();
+            $root.getRooms();
+        },
+        notify : function () {
+            this.messagesScroll();
             this.getRooms();
         },
-        notify : function () {},
         gotMessage : function () {},
         getRooms : function () {
             axios.get('/api/rooms/').then(response => {
@@ -77,10 +77,7 @@ var app = new Vue({
             axios.get('/api/messages/' + id).then(response => (this.messages = response.data));
             axios.get('/api/rooms/' + id).then(response => (this.room = response.data));
 
-            setTimeout(function(){
-                let history = document.getElementById('msg_history');
-                history.scrollTop = history.scrollHeight+50;
-            }, 500);
+            this.messagesScroll();
         },
         startLoading : function () {
             document.getElementById('loading').classList.add('start');
@@ -94,6 +91,18 @@ var app = new Vue({
                 room_id: this.room.data.id
             });
             this.message = '';
+            this.getRooms();
+            this.messagesScroll();
+        },
+        messagesScroll : function () {
+            let waiting = setInterval(t => {
+                let history = document.getElementById('msg_history');
+                if(history) {
+                    //console.dir(ul);
+                    history.scrollTop = history.scrollHeight;
+                }
+            }, 5);
+            setTimeout(t => {clearInterval(waiting)}, 1000);
         }
     },
     computed: {

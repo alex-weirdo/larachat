@@ -48,7 +48,7 @@
                 </div>
             </div>
             <div class="mesgs">
-                <div class="msg_history" id="msg_history">
+                <div v-if="messages" class="msg_history" id="msg_history">
                     <div class="" v-for="(message, index) of messages" v-bind:class="{ outgoing_msg: user_id == message.user_id, incoming_msg: user_id != message.user_id,  }">
                         <div class="incoming_msg_img" v-if="user_id != message.user_id"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
                         <div class="" v-bind:class="{ sent_msg: user_id == message.user_id, received_msg: user_id != message.user_id  }">
