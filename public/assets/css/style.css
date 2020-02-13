@@ -152,8 +152,10 @@ width: fit-content;
 text-align: right;
 }
 .input_msg_write input {
+height: 55px;
 background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
-border: medium none;
+border: medium none!important;
+outline: none;
 color: #4c4c4c;
 font-size: 15px;
 min-height: 48px;
@@ -165,7 +167,7 @@ padding-right: 60px;
 .type_msg {border-top: 1px solid #c4c4c4;position: relative;}
 .msg_send_btn {
 margin-right: 16px;
-margin-top: -5px;
+/*margin-top: -5px;*/
 background: #05728f none repeat scroll 0 0;
 border: medium none;
 border-radius: 50%;
@@ -174,8 +176,8 @@ cursor: pointer;
 font-size: 17px;
 height: 33px;
 position: absolute;
-right: 0;
-top: 11px;
+right: 10px;
+top: 16px;
 width: 33px;
 }
 .messaging { padding: 0 0 50px 0;}
