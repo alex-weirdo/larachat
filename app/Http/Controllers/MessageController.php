@@ -2,13 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendMessage;
 use App\Message;
 use App\Events\MessageSent;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use PHPUnit\Framework\MockObject\Stub\Exception;
 use Symfony\Component\Console\Output\ConsoleOutput;
+
+use Illuminate\Bus\Queueable;
 
 class MessageController extends Controller
 {
@@ -19,7 +25,7 @@ class MessageController extends Controller
      */
     public function index()
     {
-        //
+        $this->authorize('viewAny', Message::class);
     }
 
     /**
@@ -103,6 +109,10 @@ class MessageController extends Controller
     }
 
 
+    /**
+     * @param Request $request
+     * @return bool|string
+     */
     public function sendMessage(Request $request)
     {
         $user = Auth::user();
@@ -110,6 +120,20 @@ class MessageController extends Controller
         $room = $request->room_id;
         if (!($user && $message && $room))
             return 'Ошибка в переданных полях';
+
+        /*
+         * пример джоба
+         */
+        /*
+        $job = (new SendMessage($user, $room, $message))->delay(now()->addMinutes(10));
+        dispatch($job);
+
+        SendMessage::dispatch($user, $room, $message)
+            ->delay(now()->addSeconds(20));
+        */
+
         broadcast(new MessageSent($user, $room, $message))->toOthers();
+
+        return true;
     }
 }

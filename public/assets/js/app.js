@@ -46,6 +46,7 @@ var app = new Vue({
                 let time = ("0" + (today.getHours())).slice(-2) + ":" + ("0" + (today.getMinutes())).slice(-2) + ":" + ("0" + (today.getSeconds())).slice(-2);
                 let dateTime = date+' '+time;
                 app.messages.push({
+                    id: data.id,
                     text: data.message,
                     user_id: data.user_id,
                     user: {
@@ -54,6 +55,7 @@ var app = new Vue({
                     },
                     created_at: dateTime
                 });
+                $root.selectRoom($root.selected, $root.selectedRoomId, false);
             });
             $root.messagesScroll();
             $root.getChats();

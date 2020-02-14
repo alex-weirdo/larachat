@@ -13,6 +13,9 @@
         <div class="u_info">
             <input type="hidden" id="userid" value="{{ Auth::user()->id }}">
             <p id="username">{{ Auth::user()->name }}</p>
+            @if (Auth::user()->isAdmin())
+                <p id="role">Администратор</p>
+            @endif
             <a href="http://localhost:8000/logout" onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                 Выйти

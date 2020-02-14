@@ -39,6 +39,17 @@ class User extends Authenticatable
 
     protected $table = 'users';
 
+
+    public function roles () {
+        return $this->belongsToMany(Role::class, 'user_role');
+    }
+
+    public function isAdmin () {
+        $res = Role::find(1)->users()->wherePivot('user_id', $this->id)->get()->count();
+        return ($res) ? true : false;
+    }
+
+
     public function dialogs () {
         return $this->belongsToMany(Dialog::class, 'users_dialogs');
     }

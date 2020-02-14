@@ -243,3 +243,9 @@ overflow-y: auto;
 .fa-paper-plane {
     margin-left: -4px;
 }
+
+p#role {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: -5px;
+}
